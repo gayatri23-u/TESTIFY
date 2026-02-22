@@ -1,10 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view_task">
+    android:background="#F5F7FB">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- AppBar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_toolbar_gradient"
+        android:elevation="6dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarAddTask"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="View Task"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/back_arrow"
+            app:navigationIconTint="@android:color/white"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="90dp"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Month Selector -->
+            <LinearLayout
+                android:id="@+id/layoutMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/btnPrevMonth"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/thin_left_arrow"/>
+
+                <TextView
+                    android:id="@+id/txtMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Feb 2026"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginHorizontal="12dp"/>
+
+                <ImageView
+                    android:id="@+id/btnNextMonth"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/thin_right_arrow"/>
+            </LinearLayout>
+
+            <!-- Hint -->
+            <TextView
+                android:id="@+id/txtHint"
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Tap a box to mark task as Done/Not Done"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutMonth"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!-- Table Header -->
+            <LinearLayout
+                android:id="@+id/layoutTableHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/txtHint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Fixed Column Header -->
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:text="Task Name"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <!-- Scrollable Dates Header -->
+                <HorizontalScrollView
+                    android:id="@+id/headerScroll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/layoutHeaderRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <!-- Dates (1..31) will be added dynamically -->
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <!-- Dynamic Task Rows -->
+            <LinearLayout
+                android:id="@+id/containerTaskRows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutTableHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Fixed Bottom Action Bar -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddTask"
+            android:layout_width="0dp"
+            android:layout_height="58dp"
+            android:layout_weight="1"
+            android:text="Add Task"
+            app:icon="@drawable/plus"
+            app:iconGravity="textStart"
+            android:layout_marginEnd="1dp"
+            android:background="@drawable/background_gradient"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnJumpToday"
+            android:layout_width="0dp"
+            android:layout_height="58dp"
+            android:layout_weight="1"
+            android:text="Jump-to-   Today"
+            app:iconGravity="textStart"
+            android:layout_marginEnd="1dp"
+            android:textSize="14sp"
+            android:background="@drawable/background_gradient"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewStats"
+            android:layout_width="0dp"
+            android:layout_height="58dp"
+            android:layout_weight="1"
+            android:text="View Stats"
+            app:icon="@drawable/stats"
+            app:iconGravity="textStart"
+            android:background="@drawable/background_gradient"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

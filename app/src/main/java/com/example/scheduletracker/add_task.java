@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -17,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -69,7 +71,6 @@ public class add_task extends AppCompatActivity {
 
         // Save
         btnSaveTask.setOnClickListener(v -> saveTaskRangeToFirestore());
-
     }
 
     private void pickDate(Calendar cal, TextView target) {
@@ -118,11 +119,22 @@ public class add_task extends AppCompatActivity {
 
         String uid = mAuth.getCurrentUser().getUid();
 
+        WriteBatch batch = db.batch();
         Calendar loopCal = (Calendar) startCal.clone();
 
         while (!loopCal.after(endCal)) {
             String dateKey = dateFormat.format(loopCal.getTime());
 
+            // 1. Reference to the parent date document
+            DocumentReference dateDocRef = db.collection("Tasks")
+                    .document(uid)
+                    .collection("dates")
+                    .document(dateKey);
+
+            // 2. Reference to the new task item document in the subcollection
+            DocumentReference taskItemRef = dateDocRef.collection("items").document();
+
+            // Create the task data
             Map<String, Object> task = new HashMap<>();
             task.put("title", title);
             task.put("desc", desc);
@@ -130,23 +142,27 @@ public class add_task extends AppCompatActivity {
             task.put("completed", false);
             task.put("date", dateKey);
             task.put("userId", uid);
-            task.put("createdAt", System.currentTimeMillis());
 
-            db.collection("Tasks")
-                    .document(uid)
-                    .collection("dates")
-                    .document(dateKey)
-                    .collection("items")
-                    .add(task)
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                    );
+            // Add operations to the batch
+            // Explicitly create/merge the date document to ensure it exists for queries
+            batch.set(dateDocRef, new HashMap<>(), SetOptions.merge());
+            // Create the task item document
+            batch.set(taskItemRef, task);
 
             loopCal.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        Toast.makeText(this, "Task added for selected days", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(add_task.this, dashboard.class));
-        finish();
+        // Commit the batch
+        batch.commit()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Tasks added successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(add_task.this, dashboard.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error adding tasks: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 }

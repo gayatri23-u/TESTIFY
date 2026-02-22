@@ -4,5 +4,10 @@
     <color name="grey">#2F2C2C</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primaryColor">#1F6FEA</color>
+    <color name="medium_blue">#0B74C8</color>
     <color name="purple">#673AB7</color>
+    <color name="dark_blue">#00008B</color>
+    <color name="faint_grey">#dcdcdc</color>
+    <color name="red">#a40000 </color>
 </resources>
+

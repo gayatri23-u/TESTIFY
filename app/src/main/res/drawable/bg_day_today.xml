@@ -3,6 +3,6 @@
     <solid android:color="@android:color/transparent"/>
     <stroke
         android:width="2dp"
-        android:color="#2196F3"/>   <!-- Blue border -->
+        android:color="#010A12"/>   <!-- Blue border -->
     <corners android:radius="50dp"/>  <!-- Circle ring -->
 </shape>

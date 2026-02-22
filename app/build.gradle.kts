@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation (platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation ("com.google.firebase:firebase-firestore")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.firebase.auth)
     implementation(libs.credentials)
     implementation(libs.credentials.play.services.auth)
